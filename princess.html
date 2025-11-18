@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Princess Day</title>
+  <style>
+    /* reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;background:#050408;color:#fff}
+    body{overflow:hidden}
+
+    /* stage */
+   .stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  background: radial-gradient(
+      circle at 80% 0%,
+      rgba(255, 20, 147, 0.30),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 20% 100%,
+      rgba(90, 0, 200, 0.35),
+      transparent 65%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(0, 0, 0, 0.95),
+      rgba(10, 0, 25, 1)
+    );
+}
+
+
+    /* gif size classes - hidden until active */
+    .gif-medium{height:30vh;max-height:320px;width:auto;margin:0 auto 18px;display:block;object-fit:contain;visibility:hidden;opacity:0;transition:opacity .28s ease, transform .28s ease}
+    .gif-medium.active{visibility:visible;opacity:1;transform:translateY(0)}
+
+    /* TITLES */
+    .title{font-family: 'Pacifico', 'Brush Script MT', cursive; font-size:48px;line-height:1.02;margin-bottom:12px;opacity:0;transform:translateY(6px);transition:all .46s cubic-bezier(.2,.9,.22,1)}
+    .subtitle{font-size:20px;opacity:0;transform:translateY(6px);transition:all .46s .06s cubic-bezier(.2,.9,.22,1)}
+
+    /* BUTTONS */
+    .btn{display:inline-flex;align-items:center;gap:10px;justify-content:center;margin-top:26px;padding:14px 34px;border-radius:60px;border:none;cursor:pointer;font-weight:700;font-size:18px;box-shadow:0 10px 30px rgba(0,0,0,0.5);transition:transform .14s ease}
+    .btn:active{transform:scale(.98)}
+    .gradient-pink{background:linear-gradient(90deg,#ff5fa3,#9b51ff);color:#fff}
+
+    /* screens default hidden for confirm & final */
+    .screen { position:relative; }
+    .confirm, .final { display:none; opacity:0; pointer-events:none; transition:opacity .34s ease; position:fixed; inset:0; align-items:center; justify-content:center; z-index:6; }
+    .confirm.show, .final.show { display:flex; opacity:1; pointer-events:auto; }
+
+    .confirmCard{max-width:760px;width:92%;padding:34px;border-radius:18px;text-align:center}
+    .confirmTitle{font-family:cursive;font-size:38px;margin-bottom:18px;transform:translateY(8px);opacity:0;transition:all .4s cubic-bezier(.2,.9,.22,1)}
+    .confirmDesc{font-size:18px;opacity:0;transform:translateY(8px);transition:all .4s .06s cubic-bezier(.2,.9,.22,1)}
+    .show-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 40px;border-radius:60px;border:none;background:linear-gradient(90deg,#ff2d55,#ff6a9b);color:#fff;font-weight:800;font-size:18px;margin-top:26px;cursor:pointer}
+
+    /* FINAL */
+    .finalCard{text-align:center}
+    .finalTitle{font-size:54px;letter-spacing:1px;transform:scale(.7);opacity:0;transition:all .5s cubic-bezier(.2,.9,.22,1)}
+    .finalTitle.pop{transform:scale(1);opacity:1;animation:pop .5s cubic-bezier(.2,.9,.22,1)}
+    @keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+    .finalSub{margin-top:12px;font-size:20px;opacity:0;transform:translateY(10px);transition:all .4s .08s cubic-bezier(.2,.9,.22,1)}
+
+    /* HEARTS (use text heart emoji for reliable shape) */
+    .heart{position:fixed;left:50%;bottom:18vh;transform:translateX(-50%) translateY(0) scale(.8);opacity:0;font-size:22px;line-height:1;pointer-events:none;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.45));}
+    @keyframes heartPopUp{
+      0%{transform:translateX(-50%) translateY(0) scale(.6);opacity:0}
+      8%{opacity:1;transform:translateX(-50%) translateY(-6px) scale(1.12)}
+      40%{transform:translateX(-50%) translateY(-90px) scale(1)}
+      100%{transform:translateX(-50%) translateY(-260px) scale(.8);opacity:0}
+    }
+
+    /* confetti */
+    .confetti{position:fixed;left:0;right:0;top:0;bottom:0;pointer-events:none;z-index:7}
+    .confetti>div{position:absolute;width:9px;height:14px;border-radius:2px;animation:fall 2200ms linear forwards}
+    @keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:1}}
+
+    /* z-index layering */
+    #screen1 { z-index:4; text-align: center; }      /* base stage content under overlays */
+    .confirm { z-index:8; }     /* confirmation overlay */
+    .final   { z-index:9; }     /* final overlay on top */
+
+    @media (max-width:600px){
+      .title{font-size:34px}
+      .confirmTitle{font-size:28px}
+      .finalTitle{font-size:38px}
+      .gif-medium{height:24vh;max-height:220px}
+      .heart{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+    <div class="card" aria-live="polite">
+
+      <!-- SCREEN 1 -->
+      <div id="screen1" class="screen">
+        <!-- GIFs intentionally use data-src and no src, alt="" to avoid broken-icon -->
+        <img id="gif1" class="gif-medium" data-src="src/s1.gif" alt=""/>
+        <div class="title" id="t1">I have a little secret for you...</div>
+        <div class="subtitle" id="s1">And trust me... only <strong>YOU</strong> deserve this ✨</div>
+        <button class="btn gradient-pink" id="openBtn">Open it ♥</button>
+      </div>
+
+      <!-- SCREEN 2 (confirm) -->
+      <div id="screen2" class="confirm" aria-hidden="true">
+        <div class="confirmCard">
+          <img id="gif2" class="gif-medium" data-src="src/sc2.gif" alt=""/>
+          <div class="confirmTitle" id="cTitle">Are you really ready to know...?</div>
+          <div class="confirmDesc" id="cDesc">It's a tiny secret but special — press the button if you're sure ✨</div>
+          <button class="show-btn" id="showMe">Show Me →</button>
+        </div>
+      </div>
+
+      <!-- SCREEN 3 (final) -->
+      <div id="screen3" class="final" aria-hidden="true">
+        <div class="finalCard">
+          <img id="gif3" class="gif-medium" data-src="src/s3.gif" alt=""/>
+          <div id="finalTitle" class="finalTitle">HAPPY PRINCESS DAY ❤️</div>
+          <div id="finalSub" class="finalSub">May your day be as lovely as you are, <span id="nameFinal">Princess</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    // personalize
+    const PRINCESS_NAME = 'Princess'; // change to desired name
+    document.getElementById('nameFinal').textContent = PRINCESS_NAME;
+
+    // elements
+    const t1 = document.getElementById('t1');
+    const s1 = document.getElementById('s1');
+    const openBtn = document.getElementById('openBtn');
+    const screen2 = document.getElementById('screen2');
+    const cTitle = document.getElementById('cTitle');
+    const cDesc = document.getElementById('cDesc');
+    const showMe = document.getElementById('showMe');
+    const screen3 = document.getElementById('screen3');
+    const finalTitle = document.getElementById('finalTitle');
+    const finalSub = document.getElementById('finalSub');
+    const confettiRoot = document.getElementById('confetti');
+
+    const gif1 = document.getElementById('gif1');
+    const gif2 = document.getElementById('gif2');
+    const gif3 = document.getElementById('gif3');
+
+    /* helper: set/unset img src to start/stop GIF rendering.
+       We also wait for the `load` event before showing the image to prevent the broken icon flash. */
+    function activateGif(img){
+      if(!img) return;
+      // if already active, ignore
+      if(img.dataset.active === '1') return;
+      const src = img.dataset.src;
+      if(!src) return;
+      // create a tiny Image to preload; only when loaded we set src on the <img>
+      const pre = new Image();
+      pre.onload = () => {
+        img.src = src;
+        img.classList.add('active');
+        img.dataset.active = '1';
+      };
+      pre.onerror = () => {
+        // fallback: set src anyway (some servers may block preloading but still allow direct)
+        img.src = src;
+        img.classList.add('active');
+        img.dataset.active = '1';
+      };
+      pre.src = src;
+    }
+    function deactivateGif(img){
+      if(!img) return;
+      img.dataset.active = '0';
+      img.classList.remove('active');
+      // remove src after a small timeout so fade-out looks smooth
+      setTimeout(()=> { try{ img.src = ''; }catch(e){} }, 80);
+    }
+
+    // Show / hide helpers with display + fade
+    function showScreen(el){
+      el.style.display = 'flex';
+      // allow layout to apply then fade in
+      setTimeout(()=> el.classList.add('show'), 20);
+    }
+    function hideScreen(el){
+      el.classList.remove('show');
+      setTimeout(()=> {
+        el.style.display = 'none';
+        // remove any gifs inside to stop animation while hidden
+        const imgs = el.querySelectorAll('img[data-src]');
+        imgs.forEach(deactivateGif);
+      }, 360); // matches CSS transition
+    }
+
+    // initial entrance for screen1: activate gif1 and animate text
+    window.addEventListener('load', ()=>{
+      // activate only the first GIF at start
+      activateGif(gif1);
+      // quick text animation
+      setTimeout(()=>{ t1.style.opacity=1; t1.style.transform='translateY(0)'; }, 160);
+      setTimeout(()=>{ s1.style.opacity=1; s1.style.transform='translateY(0)'; }, 320);
+      setTimeout(()=>{ openBtn.style.transform='translateY(0) scale(1)'; openBtn.style.opacity=1 }, 460);
+    });
+
+    // open -> show confirm
+    openBtn.addEventListener('click', ()=>{
+      // fade out screen1 elements
+      t1.style.transition = 'all .28s ease'; s1.style.transition = 'all .28s ease'; openBtn.style.transition = 'all .28s ease';
+      t1.style.opacity = 0; s1.style.opacity = 0; openBtn.style.opacity = 0; openBtn.style.transform = 'translateY(6px) scale(.98)';
+
+      setTimeout(()=>{
+        // deactivate gif1 to stop it rendering behind other overlays
+        deactivateGif(gif1);
+
+        // activate gif2 & show confirm overlay
+        activateGif(gif2);
+        showScreen(screen2);
+        screen2.setAttribute('aria-hidden','false');
+
+        // animate confirm inner items
+        setTimeout(()=>{ cTitle.style.opacity=1; cTitle.style.transform='translateY(0)'; }, 120);
+        setTimeout(()=>{ cDesc.style.opacity=1; cDesc.style.transform='translateY(0)'; }, 240);
+      }, 360);
+    });
+
+    // show me -> final reveal
+    showMe.addEventListener('click', ()=>{
+      // hide confirm and its gif
+      hideScreen(screen2);
+      screen2.setAttribute('aria-hidden','true');
+
+      // activate final gif and show final overlay
+      activateGif(gif3);
+      showScreen(screen3);
+      screen3.setAttribute('aria-hidden','false');
+
+      setTimeout(()=>{ finalTitle.classList.add('pop'); finalTitle.style.opacity=1; finalTitle.style.transform='scale(1)'; }, 80);
+      setTimeout(()=>{ finalSub.style.opacity=1; finalSub.style.transform='translateY(0)'; }, 220);
+
+      spawnConfetti(80);
+      // optional: start heart fountain or other effects here
+    });
+
+    function spawnConfetti(n=40){
+      const colors = ['#ff6b9a','#ffd166','#8b5cf6','#4ade80','#60a5fa'];
+      for(let i=0;i<n;i++){
+        const el = document.createElement('div');
+        el.style.left = (Math.random()*100) + '%';
+        el.style.top = (Math.random()*10 - 10) + 'vh';
+        el.style.background = colors[Math.floor(Math.random()*colors.length)];
+        el.style.width = Math.round(6 + Math.random()*12) + 'px';
+        el.style.height = Math.round(10 + Math.random()*16) + 'px';
+        el.style.animationDuration = (1100 + Math.random()*1600) + 'ms';
+        confettiRoot.appendChild(el);
+        setTimeout(()=> el.remove(), 2600);
+      }
+    }
+
+    // If you want to reactivate screen1 later:
+    // activateGif(gif1);
+  </script>
+</body>
+</html>
